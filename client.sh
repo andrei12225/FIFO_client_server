@@ -19,7 +19,7 @@ REQUEST="BEGIN-REQ [$$: $COMMAND] END-REQ"
 
 #sending the request to the fifo
 
-if [[ ! -p "$SERVER_FIFO" ]] then #test if the fifo exists
+if [[ ! -p "$SERVER_FIFO" ]]; then #test if the fifo exists
     echo "Bad server connection, try again"
     exit 1
 fi
@@ -28,9 +28,20 @@ fi
 
 echo "$REQUEST" > "$SERVER_FIFO"
 
-sleep 1 ## wait for server to create client fifo
+cnt=0
+while [[ ! -p "$CLIENT_FIFO" ]]
+do
+    sleep 0.1
+    ((cnt++)) ## wait max 1 second
+    if [ "$cnt" -eq 10 ]; then
+        echo "Server timeout"
+        exit 1
+    fi
+done
+## wait for server to create client fifo
 
 
-if [[  -p "$SERVER_FIFO" ]] then #test if the fifo exists
+if [[ -p "$CLIENT_FIFO" ]] then #test if the fifo exists
     cat $CLIENT_FIFO
 fi
+
