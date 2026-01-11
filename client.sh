@@ -4,7 +4,10 @@ SERVER_FIFO="/tmp/fifo_server"
 CLIENT_FIFO="/tmp/fifo_$$" # $$ - PID 
 COMMAND=$1 #command we want to know the man of
 
-#echo "$CLIENT_FIFO"
+#echo "$#"
+if [ "$#" -ne 1 ] ; then
+    echo "Please provide one argument and only one"
+fi
 
 clean_up() {
     if [[ -p "$CLIENT_FIFO" ]]; then
@@ -14,7 +17,9 @@ clean_up() {
 }
 
 trap 'clean_up' EXIT
-#remove the fifo when stopping the process
+trap 'clean_up' SIGINT
+
+#remove the fifo when stopping the process or when the process is done
 
 REQUEST="BEGIN-REQ [$$: $COMMAND] END-REQ"
 ##echo "$REQUEST"
