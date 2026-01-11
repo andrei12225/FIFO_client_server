@@ -7,8 +7,10 @@ COMMAND=$1 #command we want to know the man of
 #echo "$CLIENT_FIFO"
 
 clean_up() {
-    rm "$CLIENT_FIFO"
-    exit 0
+    if [[ -p "$CLIENT_FIFO" ]]; then
+        rm "$CLIENT_FIFO"
+        exit 0
+    fi
 }
 
 trap 'clean_up' EXIT
