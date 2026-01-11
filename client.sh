@@ -11,7 +11,7 @@ clean_up() {
     exit 0
 }
 
-trap 'clean_up' SIGINT
+trap 'clean_up' EXIT
 #remove the fifo when stopping the process
 
 REQUEST="BEGIN-REQ[$$:$COMMAND]END-REQ"
@@ -21,6 +21,9 @@ REQUEST="BEGIN-REQ[$$:$COMMAND]END-REQ"
 
 if [[ ! -p "$SERVER_FIFO" ]] then #test if the fifo exists
     echo "Bad server connection, try again"
-    exit
+    exit 1
 fi
 
+#send the request to the server
+
+echo "$REQUEST" > "$SERVER_FIFO"
