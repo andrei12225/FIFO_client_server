@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SERVER_FIFO="/tmp/fifo_server"
-CLIENT_FIFO="/tmp/fifo$$" # $$ - PID 
+CLIENT_FIFO="/tmp/fifo_$$" # $$ - PID 
 COMMAND=$1 #command we want to know the man of
 
 #echo "$CLIENT_FIFO"
@@ -14,7 +14,7 @@ clean_up() {
 trap 'clean_up' EXIT
 #remove the fifo when stopping the process
 
-REQUEST="BEGIN-REQ[$$:$COMMAND]END-REQ"
+REQUEST="BEGIN-REQ [$$: $COMMAND] END-REQ"
 ##echo "$REQUEST"
 
 #sending the request to the fifo
@@ -27,3 +27,10 @@ fi
 #send the request to the server
 
 echo "$REQUEST" > "$SERVER_FIFO"
+
+sleep 1 ## wait for server to create client fifo
+
+
+if [[  -p "$SERVER_FIFO" ]] then #test if the fifo exists
+    cat $CLIENT_FIFO
+fi
