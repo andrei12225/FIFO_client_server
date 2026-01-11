@@ -44,4 +44,3 @@ done
 if [[ -p "$CLIENT_FIFO" ]] then #test if the fifo exists
     cat $CLIENT_FIFO
 fi
-
