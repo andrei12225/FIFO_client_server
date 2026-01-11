@@ -29,18 +29,20 @@ while true; do
 
             CLIENT_FILE="/tmp/fifo_$pid"
 
-            if [[ -p "$CLIENT_FILE" ]] then
-                echo "FIFO ALREADY EXISTS FOR $pid, DOING NOTHING"
-            else
-                mkfifo "$CLIENT_FILE"
-                echo "CREATED FIFO $CLIENT_FILE"
-
-                if man "$command" > /dev/null 2>/dev/null; then
-                    man "$command" > "$CLIENT_FILE"
+            (
+                if [[ -p "$CLIENT_FILE" ]] then
+                    echo "FIFO ALREADY EXISTS FOR $pid, DOING NOTHING"
                 else
-                    echo "No manual entry for $command." > "$CLIENT_FILE"
-                fi;
-            fi
+                    mkfifo "$CLIENT_FILE"
+                    echo "CREATED FIFO $CLIENT_FILE"
+
+                    if man "$command" > /dev/null 2>/dev/null; then
+                        man "$command" > "$CLIENT_FILE"
+                    else
+                        echo "No manual entry for $command." > "$CLIENT_FILE"
+                    fi
+                fi
+            ) &
         fi
     fi
 done
